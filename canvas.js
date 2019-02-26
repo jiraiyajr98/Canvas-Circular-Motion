@@ -4,7 +4,15 @@ var c = canvas.getContext('2d');
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
+var mouse={
+   x:undefined,
+   y:undefined
+ }
 
+window.addEventListener('mousemove',function(event){
+   mouse.x=event.x;
+   mouse.y=event.y;
+ });
 
 let particles = [];
 
@@ -26,6 +34,7 @@ function Circle(x,y,radius,color){
 	this.distanceFromCenter = randonIntInRange(50,200);
 	this.lastX;
 	this.lastY;
+	this.mouseLast = {x:x,y:y};
 										
 
 	this.update = () => {
@@ -33,8 +42,16 @@ function Circle(x,y,radius,color){
 		this.lastX = this.x
 		this.lastY = this.y;
 		this.radians += this.velocity;
-		this.x = x + Math.cos(this.radians)*this.distanceFromCenter;
-		this.y = y + Math.sin(this.radians)*this.distanceFromCenter;
+		
+		this.mouseLast.x = mouse.x;
+		this.mouseLast.y = mouse.y;
+		
+		this.mouseLast.x += (mouse.x - this.mouseLast.x) * 0.05;
+		this.mouseLast.y += (mouse.y - this.mouseLast.y) * 0.05;
+		
+		
+		this.x = this.mouseLast.x + Math.cos(this.radians)*this.distanceFromCenter;
+		this.y = this.mouseLast.y + Math.sin(this.radians)*this.distanceFromCenter;
 		this.draw();
 	};
 
@@ -65,8 +82,6 @@ function init() {
 		
 
 		}
-
-		console.log(particles);
 
 		particles.forEach(particle => {
 		particle.draw();
